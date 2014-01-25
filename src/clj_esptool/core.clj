@@ -24,12 +24,21 @@
                  "level" :string   
                   "owner" :string    
                   "message" :string }))
+(def web-data-event (new-event "WebDataEvent"
+                               {"time"  :string
+                                "src" :string
+                                "src_port" :string
+                                "dst" :string
+                                "dst_port" :string
+                                "url" :string
+                                "host" :string
+                                "user-agent" :string}))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+                   ;; 2. Define Enumerators 
+                   ;; 3. Define Service 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; 2. Define Enumerators 
-;; 3. Define Service 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (def ctx (ZMQ/context 1))
 (def shoot-now (atom (System/currentTimeMillis)))
@@ -186,7 +195,7 @@
 		  "\t ==> I can only run CLIENT!!!\n\n")
     :else (do
     (reset! default-service (create-service "default" 
-			(configuration log-data-event)))
+			(configuration log-data-event web-data-event)))
     (println "\n\n\n!!! esp-handler " (.getURI @default-service) 
 			" at tcp://127.0.0.1:5555.. READY OK!!.n\n")
     
@@ -264,6 +273,22 @@
       (println "Terminating esp-handler!")))))
 
 
+                                        ; webn client
+(defn weblog
+  ([num-events] (weblog num-events "tcp://127.0.0.1:3240" @default-service))
+  ([num-events zmqu service]
+     (let [s (.socket ctx ZMQ/SUB)
+           i (atom 0)]
+       (.subscribe s "")
+       (.connect s zmqu)
+       (dotimes [_ num-events]
+         (if (= (mod @i 10) 0)
+           (println "@@@@ Sending " @i " event"))
+         (send-event service
+                     (->> (.recv s) (String. ) (c/parse-string))
+                     "WebDataEvent")
+         (swap! i inc))
+       (.close s))))
 
 ; Client
 
