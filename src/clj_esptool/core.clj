@@ -274,6 +274,12 @@
 
 
                                         ; webn client
+
+(defn parse-tab-string
+  ([str] (into {} (map
+                   (fn [header row] [header row])
+                   ["src", "dst", "host", "url"]
+                   (clojure.string/split str (re-pattern "\t"))))))
 (defn weblog
   ([num-events] (weblog num-events "tcp://127.0.0.1:3240" @default-service))
   ([num-events zmqu service]
@@ -285,7 +291,7 @@
          (if (= (mod @i 10) 0)
            (println "@@@@ Sending " @i " event"))
          (send-event service
-                     (->> (.recv s) (String. ) (c/parse-string))
+                     (->> (.recv s) (String. ) (parse-tab-string))
                      "WebDataEvent")
          (swap! i inc))
        (.close s))))
