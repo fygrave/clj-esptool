@@ -31,6 +31,7 @@
                                 "dst" :string
                                 "dst_port" :string
                                 "url" :string
+                                "proto" :string
                                 "host" :string
                                 "user-agent" :string}))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -278,7 +279,7 @@
 (defn parse-tab-string
   ([str] (into {} (map
                    (fn [header row] [header row])
-                   ["src", "dst", "host", "url"]
+                   ["proto",  "src", "src_port" ,"dst", "dst_port" ,"host", "url"]
                    (clojure.string/split str (re-pattern "\t"))))))
 (defn weblog
   ([num-events] (weblog num-events "tcp://127.0.0.1:3240" @default-service))
