@@ -276,11 +276,14 @@
 
                                         ; webn client
 
+; parse web log
 (defn parse-tab-string
   ([str] (into {} (map
                    (fn [header row] [header row])
                    ["proto",  "src", "src_port" ,"dst", "dst_port" ,"host", "url"]
                    (clojure.string/split str (re-pattern "\t"))))))
+
+; weblog client
 (defn weblog
   ([num-events] (weblog num-events "tcp://127.0.0.1:3240" @default-service))
   ([num-events zmqu service]
@@ -297,6 +300,18 @@
          (swap! i inc))
        (.close s))))
 
+(defn start-counting
+  ([]  (start-counting "tcp://127.0.0.1:3240" @default-service))
+  ([zmqu service]
+     (let [s (.socket ctx ZMQ/SUB)]
+       (.subscribe s "")
+       (.connect s zmqu)
+       (while true
+         (send-event service
+                     (->> (.recv s) (String.) (parse-tab-string))
+                     "WebDataEvent")
+         )))
+  )
 ; Client
 
 (defn demo 
