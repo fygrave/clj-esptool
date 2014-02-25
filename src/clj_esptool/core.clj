@@ -7,8 +7,13 @@
   (:import [org.jeromq ZMQ])      ;;jeromq
   (:require  (cheshire [core :as c])
 	     [ clj-time.local :as loc ]
-             [ clj-time.format :as tf ])
+             [ clj-time.format :as tf ]
+             [ taoensso.carmine :as car :refer (wcar)]
+             )
 ) 
+
+(def server1-conn {:pool {} :spec {} })
+(defmacro wcar* [& body] `(car/wcar server1-conn ~@body))
 
 	
  

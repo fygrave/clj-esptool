@@ -7,6 +7,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
 		 [org.clojure/data.json "0.2.3"]
+                 [com.taoensso/carmine "2.4.5"]
 		 [org.clojure/tools.namespace "0.2.4"]
 		 [clj-time "0.6.0"] ;; clj-time
                  [com.rmoquin.bundle/jeromq "0.2.0"] ;;jeromq
