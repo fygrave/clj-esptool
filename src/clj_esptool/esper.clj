@@ -158,7 +158,7 @@
   (let [ jsonRenderer (.getJSONRenderer (.getEventRenderer (.getEPRuntime service))
                                         (.getEventType event)) ]
     (.render jsonRenderer "EventResult" event)
-    (wcar* (car/set (.src event) (.rate event)))))
+    (wcar* (car/set (.get event "src") (.get event "rate")))))
 
 
 (defn statement-handler-json
