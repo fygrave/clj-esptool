@@ -12,8 +12,8 @@
              )
 ) 
 
-(def server1-conn {:pool {} :spec {} })
-(defmacro wcar* [& body] `(car/wcar server1-conn ~@body))
+(def server2-conn {:pool {} :spec {} })
+(defmacro wcar2* [& body] `(car/wcar server2-conn ~@body))
 
 	
  

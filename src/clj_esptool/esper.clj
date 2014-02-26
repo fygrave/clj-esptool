@@ -1,15 +1,22 @@
 
 (ns clj-esptool.esper
   (:require [ clj-time.local :as loc ]
-	    [ clj-time.format :as tf ])
+	    [ clj-time.format :as tf ]
+            [taoensso.carmine :as car :refer (wcar)]
+            )
   (:import [com.espertech.esper.client EPServiceProvider
 				       Configuration
 				       StatementAwareUpdateListener
                                        UpdateListener
                                        EPServiceProviderManager]
 	   [com.espertech.esper.core.service EPServiceProviderImpl]
-))
- 
+           ))
+;; this is temporal hack
+;; we need a proper API to set event renderers. later
+
+(def server1-conn {:pool {} :spec {} })
+(defmacro wcar* [& body] `(car/wcar server1-conn ~@body))
+ ;; end of hack
 (def attr-types
  {:int Integer
   :long Long
@@ -150,7 +157,8 @@
   [service event]
   (let [ jsonRenderer (.getJSONRenderer (.getEventRenderer (.getEPRuntime service))
                                         (.getEventType event)) ]
-    (.render jsonRenderer "EventResult" event)))
+    (.render jsonRenderer "EventResult" event)
+    (wcar* (car/set (.src event) (.rate event)))))
 
 
 (defn statement-handler-json
