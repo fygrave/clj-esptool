@@ -159,6 +159,7 @@
                                         (.getEventType event)) ]
     (.render jsonRenderer "EventResult" event)
     (wcar* (car/set (.get event "src") (.get event "rate")))
+    (wcar* (car/expire (.get event "src") 3600))
     (wcar* (car/zadd "rates" (.get event "rate") (.get event "src")))
     ))
 
