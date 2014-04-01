@@ -22,7 +22,7 @@ class RateCheck(NagiosCheck):
 
     def check(self, opts, args):
         msg = "OK Rates"
-        data = self.redis.keys('*.*.*.*')
+        data = self.keys('*.*.*.*')
         
         rate = int (opts.rate or 600)
         average = int (opts.average or 600)
